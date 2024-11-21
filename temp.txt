@@ -1,0 +1,1391 @@
+//Shell:
+//bubble
+echo "Bubble sort program"
+
+read -p "enter the number of elements: " n
+
+
+echo "Enter the numbers: "
+
+for ((i=0; i< n; i++)); do
+	read -p "Number $(($i + 1)): " num[i]
+done
+
+for ((i=0; i<n; i++)); do
+	for ((j=0; j <n - i - 1; j++)); do
+		if [ ${num[j]} -gt ${num[$((j + 1))]} ]; then
+			temp=${num[j]}
+			num[j]=${num[$((j + 1))]}
+			num[$((j + 1))]=$temp
+		fi
+	done
+done
+
+echo "sorted list:"
+for ((i = 0; i < n; i++)); do
+	echo "${num[i]}"
+done
+
+##############################################################################
+//selection
+
+echo "Enter the number of elements:"
+read n
+echo "Enter the elements:"
+for (( i=0; i<n; i++ )); do
+    read arr[$i]
+done
+
+# Selection Sort
+for (( i=0; i<n-1; i++ )); do
+    min_idx=$i
+    for (( j=i+1; j<n; j++ )); do
+        if (( arr[j] < arr[min_idx] )); then
+            min_idx=$j
+        fi
+    done
+    # Swap arr[i] and arr[min_idx]
+    temp=${arr[$i]}
+    arr[$i]=${arr[$min_idx]}
+    arr[$min_idx]=$temp
+done
+
+# Display sorted array
+echo "Sorted array:"
+for (( i=0; i<n; i++ )); do
+    echo -n "${arr[$i]} "
+done
+echo
+
+###################################################################################
+
+//palindrome
+read -p "Enter a string: " input
+
+# Step 3: Find the actual length of string
+len=${#input}
+flag=true
+
+# Step 4: Initialize pointers
+i=0  # Start of the string
+j=$((len - 1))  # End of the string
+
+# Step 5-8: Loop to check characters
+while [ $i -lt $j ]; do
+    if [ "${input:$i:1}" != "${input:$j:1}" ]; then
+        # Step 6: Characters do not match, set flag to false
+        flag=false
+        break
+    fi
+    i=$((i + 1))  # Increment start pointer
+    j=$((j - 1))  # Decrement end pointer
+done
+
+# Step 9: Display result
+if $flag; then
+    echo "String is a palindrome"
+else
+    echo "String is not a palindrome"
+fi
+
+#######################################################################################
+
+//substring
+echo "substring checking problem"
+
+read -p "enter main string: " str1
+read -p "enter the second string: " str2
+
+if [ -z "$str1" ]; then
+	echo "first string cannot be empty."
+	exit 1
+fi
+
+pos=0
+found=false
+position=()
+
+while [ $pos -le $((${#str1} - ${#str2})) ]; do
+	sub=${str1:pos:${#str2}}
+	if [ "$sub" == "$str2" ]; then
+		found=true
+		position+=($pos)
+	fi
+	pos=$((pos + 1))
+done
+
+if $found; then
+	echo "substring found at position: ${position[@]}"
+else
+	echo "substring does not exist"
+fi
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+//AWK
+//STUDENTS
+
+#!/usr/bin/awk -f
+
+BEGIN {
+    print "Student Marks, Average, and Grades:"
+}
+
+{
+    # Parse the input line to extract the student name and marks
+    match($0, /students\["([^"]+)"\] = "([^"]+)"/, groups)
+    if (groups[1] && groups[2]) {
+        name = groups[1]
+        split(groups[2], marks_array, " ")
+
+        total = 0
+        count = 0
+        fail_flag = 0
+
+        # Print the student's marks
+        printf "%s: ", name
+        for (i in marks_array) {
+            printf "%s ", marks_array[i]
+            mark = marks_array[i] + 0
+            total += mark
+            count++
+            if (mark < 40) {
+                fail_flag = 1
+            }
+        }
+
+        # Calculate the average
+        average = total / count
+
+        # Determine the grade
+        if (fail_flag) {
+            grade = "Fail"
+        } else if (average >= 90) {
+            grade = "A"
+        } else if (average >= 75) {
+            grade = "B"
+        } else if (average >= 60) {
+            grade = "C"
+        } else if (average >= 50) {
+            grade = "D"
+        } else {
+            grade = "E"
+        }
+
+        # Print the average and grade
+        printf "-> Average: %.2f -> Grade: %s\n", average, grade
+    }
+}
+
+students["John"] = "85 70 78 89 88"
+students["Doe"] = "45 38 50 62 58"
+students["Alice"] = "76 84 79 91 87"
+students["Bob"] = "39 82 55 70 65"
+
+##########################################################################################
+
+//SALARY
+
+BEGIN {
+    # Print the header
+    printf "%-10s %-10s %-10s %-10s %-10s %-10s\n", "Roll No.", "Name", "BS", "DA", "HRA", "GS"
+    printf "---------------------------------------------------------------\n"
+}
+
+# Process each line of input
+{
+    # Split the line into fields using ":" as the delimiter
+    split($0, fields, ":")
+
+    # Extract values
+    roll_no = fields[1]
+    name = fields[2]
+    bs = fields[3]
+
+    # Calculate DA, HRA, and GS
+    da = 0.5 * bs
+    hra = 0.2 * bs
+    gs = bs + da + hra
+
+    # Print the results in the specified format
+    printf "%-10s %-10s %-10.2f %-10.2f %-10.2f %-10.2f\n", roll_no, name, bs, da, hra, gs
+}
+
+101:John:20000
+102:Jane:30000
+103:Mike:25000
+104:Emma:22000
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+//Readers-Writers problem
+
+//semaphores Readers-Writers problem
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
+#include <stdint.h>  // For intptr_t
+
+sem_t resource_access;    // Controls access to the resource
+sem_t read_count_access;  // Controls access to read count
+sem_t service_queue;      // Ensures fair scheduling between readers and writers
+int read_count = 0;
+
+void* reader(void* reader_id) {
+    int id = (int)(intptr_t)reader_id;  // Use intptr_t for portable casting
+    while (1) {
+        sem_wait(&service_queue);
+        sem_wait(&read_count_access);
+
+        read_count++;
+        if (read_count == 1) {
+            sem_wait(&resource_access);  // First reader locks the resource
+        }
+        sem_post(&read_count_access);
+        sem_post(&service_queue);
+
+        printf("Reader %d is reading...\n", id);
+        sleep(rand() % 3 + 1);  // Simulate reading
+
+        sem_wait(&read_count_access);
+        read_count--;
+        if (read_count == 0) {
+            sem_post(&resource_access);  // Last reader unlocks the resource
+        }
+        sem_post(&read_count_access);
+
+        sleep(rand() % 3 + 1);  // Simulate waiting before reading again
+    }
+    pthread_exit(NULL);
+}
+
+void* writer(void* writer_id) {
+    int id = (int)(intptr_t)writer_id;  // Use intptr_t for portable casting
+    while (1) {
+        sem_wait(&service_queue);
+        sem_wait(&resource_access);  // Writer locks the resource
+
+        printf("Writer %d is writing...\n", id);
+        sleep(rand() % 3 + 1);  // Simulate writing
+
+        sem_post(&resource_access);
+        sem_post(&service_queue);
+
+        sleep(rand() % 3 + 1);  // Simulate waiting before writing again
+    }
+    pthread_exit(NULL);
+}
+
+int main() {
+    pthread_t readers[3], writers[2];
+    int reader_ids[3] = {1, 2, 3};
+    int writer_ids[2] = {1, 2};
+
+    // Initialize semaphores
+    sem_init(&resource_access, 0, 1);
+    sem_init(&read_count_access, 0, 1);
+    sem_init(&service_queue, 0, 1);
+
+    // Create reader and writer threads
+    for (int i = 0; i < 3; i++) {
+        pthread_create(&readers[i], NULL, reader, (void*)(intptr_t)reader_ids[i]);
+    }
+    for (int i = 0; i < 2; i++) {
+        pthread_create(&writers[i], NULL, writer, (void*)(intptr_t)writer_ids[i]);
+    }
+
+    // Wait for the threads to complete (infinite loop in this case)
+    for (int i = 0; i < 3; i++) {
+        pthread_join(readers[i], NULL);
+    }
+    for (int i = 0; i < 2; i++) {
+        pthread_join(writers[i], NULL);
+    }
+
+    // Destroy semaphores
+    sem_destroy(&resource_access);
+    sem_destroy(&read_count_access);
+    sem_destroy(&service_queue);
+
+    return 0;
+}
+
+##########################################################################################################
+
+//MUTEX Readers-Writers problem
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <stdint.h>  // For intptr_t
+
+pthread_mutex_t resource_lock;      // Controls access to the resource
+pthread_mutex_t read_count_lock;    // Controls access to read count
+int read_count = 0;
+
+void* reader(void* reader_id) {
+    int id = (int)(intptr_t)reader_id;  // Cast reader_id using intptr_t
+    while (1) {
+        pthread_mutex_lock(&read_count_lock);
+
+        read_count++;
+        if (read_count == 1) {
+            pthread_mutex_lock(&resource_lock);  // First reader locks the resource
+        }
+        pthread_mutex_unlock(&read_count_lock);
+
+        printf("Reader %d is reading...\n", id);
+        sleep(rand() % 3 + 1);  // Simulate reading
+
+        pthread_mutex_lock(&read_count_lock);
+        read_count--;
+        if (read_count == 0) {
+            pthread_mutex_unlock(&resource_lock);  // Last reader unlocks the resource
+        }
+        pthread_mutex_unlock(&read_count_lock);
+
+        sleep(rand() % 3 + 1);  // Simulate waiting before reading again
+    }
+    pthread_exit(NULL);
+}
+
+void* writer(void* writer_id) {
+    int id = (int)(intptr_t)writer_id;  // Cast writer_id using intptr_t
+    while (1) {
+        pthread_mutex_lock(&resource_lock);  // Writer locks the resource
+
+        printf("Writer %d is writing...\n", id);
+        sleep(rand() % 3 + 1);  // Simulate writing
+
+        pthread_mutex_unlock(&resource_lock);
+
+        sleep(rand() % 3 + 1);  // Simulate waiting before writing again
+    }
+    pthread_exit(NULL);
+}
+
+int main() {
+    pthread_t readers[3], writers[2];
+    int reader_ids[3] = {1, 2, 3};
+    int writer_ids[2] = {1, 2};
+
+    // Initialize mutexes
+    pthread_mutex_init(&resource_lock, NULL);
+    pthread_mutex_init(&read_count_lock, NULL);
+
+    // Create reader and writer threads
+    for (int i = 0; i < 3; i++) {
+        pthread_create(&readers[i], NULL, reader, (void*)(intptr_t)reader_ids[i]);
+    }
+    for (int i = 0; i < 2; i++) {
+        pthread_create(&writers[i], NULL, writer, (void*)(intptr_t)writer_ids[i]);
+    }
+
+    // Wait for the threads to complete (infinite loop in this case)
+    for (int i = 0; i < 3; i++) {
+        pthread_join(readers[i], NULL);
+    }
+    for (int i = 0; i < 2; i++) {
+        pthread_join(writers[i], NULL);
+    }
+
+    // Destroy mutexes
+    pthread_mutex_destroy(&resource_lock);
+    pthread_mutex_destroy(&read_count_lock);
+
+    return 0;
+}
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+//Producers-Consumers problem
+
+//semaphores Producers-Consumers problem
+
+#include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <time.h>
+
+#define BUFFER_SIZE 5
+#define MAX_STRING_LENGTH 10 // Maximum length for produced strings
+
+char buffer[BUFFER_SIZE][MAX_STRING_LENGTH]; // Circular buffer for storing produced strings
+int count = 0; // To keep track of items in the buffer
+sem_t bfull, bempty; // Semaphores for synchronization
+
+// Function to print buffer status
+void print_buffer_status() {
+    printf("Buffer status: [");
+    for (int i = 0; i < BUFFER_SIZE; i++) {
+        if (i < count) {
+            printf("%s", buffer[i]); // Print filled slots
+        } else {
+            printf("_"); // Empty slots
+        }
+        if (i != BUFFER_SIZE - 1) {
+            printf(", ");
+        }
+    }
+    printf("] (count = %d)\n", count); // Display number of items in buffer
+}
+
+// Function to generate a random string within the maximum length
+void generate_string(char *str, int max_length) {
+    int length = rand() % max_length + 1; // Random length between 1 and max_length
+    for (int i = 0; i < length; i++) {
+        str[i] = 'A' + rand() % 26; // Random uppercase letter
+    }
+    str[length] = '\0'; // Null-terminate the string
+}
+
+// Producer function
+void *producer(void *arg) {
+    for (int i = 0; i < 10; i++) {
+        char item[MAX_STRING_LENGTH];
+        generate_string(item, MAX_STRING_LENGTH); // Produce a random string
+
+        sem_wait(&bempty); // Wait if buffer is full
+        strcpy(buffer[count++], item); // Place the item in the buffer
+        printf("Producer produced: %s\n", item);
+        print_buffer_status(); // Print the current buffer status
+
+        sem_post(&bfull); // Signal that buffer has a new item
+        sleep(1); // Simulate production time
+    }
+    pthread_exit(NULL); // Terminate thread
+}
+
+// Consumer function
+void *consumer(void *arg) {
+    for (int i = 0; i < 10; i++) {
+        sem_wait(&bfull); // Wait if buffer is empty
+        char item[MAX_STRING_LENGTH];
+        strcpy(item, buffer[--count]); // Remove the item from the buffer
+        printf("Consumer consumed: %s\n", item);
+        print_buffer_status(); // Print the current buffer status
+
+        sem_post(&bempty); // Signal that buffer has space
+        sleep(1); // Simulate consumption time
+    }
+    pthread_exit(NULL); // Terminate thread
+}
+
+int main() {
+    pthread_t prod_thread, cons_thread;
+    srand(time(NULL)); // Initialize random seed for generating different strings each run
+
+    // Initialize the semaphores
+    sem_init(&bfull, 0, 0); // bfull initialized to 0 (no items in buffer)
+    sem_init(&bempty, 0, BUFFER_SIZE); // bempty initialized to BUFFER_SIZE (all slots empty)
+
+    // Create producer and consumer threads
+    pthread_create(&prod_thread, NULL, producer, NULL);
+    pthread_create(&cons_thread, NULL, consumer, NULL);
+
+    // Wait for the threads to complete
+    pthread_join(prod_thread, NULL);
+    pthread_join(cons_thread, NULL);
+
+    // Destroy the semaphores
+    sem_destroy(&bfull);
+    sem_destroy(&bempty);
+
+    return 0;
+}
+
+#################################################################################################################
+
+//MUTEX Producers-Consumers problem
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#define BUFFER_SIZE 5
+#define MAX_STRING_LENGTH 10 // Maximum length for produced strings
+char buffer[BUFFER_SIZE][MAX_STRING_LENGTH];
+int count = 0;         // To keep track of items in the buffer
+pthread_mutex_t mutex; // Mutex lock for synchronization
+// Function to print buffer status with a new format
+void print_buffer_status()
+{
+    printf("Buffer Contents: ");
+    for (int i = 0; i < count; i++)
+    {
+        printf("%s ", buffer[i]);
+    }
+    int empty_slots = BUFFER_SIZE - count;
+    printf("\nEmpty Slots: %d/%d\n", empty_slots, BUFFER_SIZE);
+    printf("Items in Buffer: %d\n", count);
+}
+// Function to generate a random string within the maximum length
+void generate_string(char *str, int max_length)
+{
+    int length = rand() % max_length + 1; // Random length between 1 and max_length
+    for (int i = 0; i < length; i++)
+    {
+        str[i] = 'A' + rand() % 26; // Random uppercase letter
+    }
+    str[length] = '\0'; // Null-terminate the string
+}
+// Producer function
+void *producer(void *arg)
+{
+    for (int i = 0; i < 10; i++)
+    {
+        char item[MAX_STRING_LENGTH];
+        generate_string(item, MAX_STRING_LENGTH); // Produce a random string
+        pthread_mutex_lock(&mutex);               // Lock the buffer
+        if (count < BUFFER_SIZE)
+        {
+            strcpy(buffer[count++], item);
+            printf("Producer produced: %s\n", item);
+            print_buffer_status(); // Print the new buffer status
+        }
+        else
+        {
+            printf("Buffer is full, producer waiting...\n");
+        }
+        pthread_mutex_unlock(&mutex); // Unlock the buffer
+        sleep(1);
+    }
+    pthread_exit(NULL);
+}
+// Consumer function
+void *consumer(void *arg)
+{
+    for (int i = 0; i < 10; i++)
+    {
+        pthread_mutex_lock(&mutex); // Lock the buffer
+        if (count > 0)
+        {
+            char item[MAX_STRING_LENGTH];
+            strcpy(item, buffer[--count]); // Consume the string
+            printf("Consumer consumed: %s\n", item);
+            print_buffer_status(); // Print the new buffer status
+        }
+        else
+        {
+            printf("Buffer is empty, consumer waiting...\n");
+        }
+        pthread_mutex_unlock(&mutex); // Unlock the buffer
+        sleep(1);
+    }
+    pthread_exit(NULL);
+}
+int main()
+{
+    pthread_t prod_thread, cons_thread;
+    pthread_mutex_init(&mutex, NULL);
+    pthread_create(&prod_thread, NULL, producer, NULL);
+    pthread_create(&cons_thread, NULL, consumer, NULL);
+    // Wait for the threads to complete
+    pthread_join(prod_thread, NULL);
+    pthread_join(cons_thread, NULL);
+    pthread_mutex_destroy(&mutex); // Destroy the mutex after use
+    return 0;
+}
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+//Banker’s Safety algorithm for Deadlock Avoidance
+
+#include <stdio.h>
+ 
+int main(){
+      int b = 0;
+      int count = 0, m, n, process, temp, resource; 
+      int allocation_table[5] = {0, 0, 0, 0, 0};
+      int available[5], current[5][5], maximum_claim[5][5];
+      int maximum_resources[5], running[5], safe_state = 0;
+      printf("\nEnter The Total Number Of Processes:\t");
+      scanf("%d", &process);
+      for(m = 0; m < process; m++) {
+            running[m] = 1;
+            count++;
+      }
+      printf("\nEnter The Total Number Of Resources To Allocate:\t");
+      scanf("%d", &resource);
+      printf("\nEnter The Claim Vector:\t");
+      for(m = 0; m < resource; m++) { 
+            scanf("%d", &maximum_resources[m]);
+      }
+      printf("\nEnter Allocated Resource Table:\n");
+      for(m = 0; m < process; m++) {
+            for(n = 0; n < resource; n++) 
+            {
+                  scanf("%d", &current[m][n]);
+            }
+      }
+      printf("\nEnter The Maximum Claim Table:\n");
+      for(m = 0; m < process; m++) {
+            for(n = 0; n < resource; n++) 
+            {
+                  scanf("%d", &maximum_claim[m][n]);
+            }
+      }
+      printf("\nThe Claim Vector \n");
+      for(m = 0; m < resource; m++) {
+            printf("\t%d ", maximum_resources[m]);
+      }
+      printf("\n The Allocated Resource Table\n");
+      for(m = 0; m < process; m++) {
+            for(n = 0; n < resource; n++) {
+                  printf("\t%d", current[m][n]);
+            }
+            printf("\n");
+      }
+      printf("\nThe Maximum Claim Table \n");
+      for(m = 0; m < process; m++) {
+            for(n = 0; n < resource; n++) {
+                  printf("\t%d", maximum_claim[m][n]);
+            }
+            printf("\n");
+      }
+      for(m = 0; m < process; m++) {
+            for(n = 0; n < resource; n++) {
+                  allocation_table[n] = allocation_table[n] + current[m][n];
+            }
+      }
+      printf("\nAllocated Resources \n");
+      for(m = 0; m < resource; m++) {
+            printf("\t%d", allocation_table[m]);
+      }
+      for(m = 0; m < resource; m++) {
+            available[m] = maximum_resources[m] - allocation_table[m];
+      }
+      printf("\nAvailable Resources:");
+      for(m = 0; m < resource; m++) {
+            printf("\t%d", available[m]);
+      }
+      printf("\n");
+      while(count != 0) {
+            safe_state = 0;
+            for(m = 0; m < process; m++) {
+                  if(running[m]) {
+                        temp = 1;
+                        for(n = 0; n < resource; n++) {
+                              if(maximum_claim[m][n] - current[m][n] > available[n]) {
+                                    temp = 0;
+                                    break;
+                              }
+                        }
+                        if(temp) {
+                               printf("\nProcess %d Is In Execution \n", m + 1);
+                               running[m] = 0;
+                               count--;
+                               safe_state = 1;
+                               for(n = 0; n < resource; n++) {
+                                     available[n] = available[n] + current[m][n];
+                               }
+                               break;
+                        }
+                  }
+            }
+            if(!safe_state) {
+                  printf("\nThe Processes Are In An Unsafe State \n");
+                  break;
+            } 
+            else {
+                  printf("\nThe Process Is In A Safe State \n");
+                  printf("\nAvailable Vector\n");
+                  for(m = 0; m < resource; m++) 
+                  {
+                        printf("\t%d", available[m]);
+                  }
+                  printf("\n");
+            }
+      }
+      return 0;
+}
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+//CPU scheduling algorithms
+
+a. First come First serve 
+
+import matplotlib.pyplot as plt
+
+class Process:
+    def __init__(self, pid, arrival_time, burst_time):
+        self.pid = pid
+        self.arrival_time = arrival_time
+        self.burst_time = burst_time
+        self.completion_time = 0
+        self.turnaround_time = 0
+        self.waiting_time = 0
+
+def fcfs_scheduling(processes):
+    processes.sort(key=lambda x: x.arrival_time)
+    current_time = 0
+    gantt_chart = []
+
+    for process in processes:
+        if current_time < process.arrival_time:
+            current_time = process.arrival_time
+        gantt_chart.append((current_time, process.pid))
+        current_time += process.burst_time
+        process.completion_time = current_time
+        process.turnaround_time = process.completion_time - process.arrival_time
+        process.waiting_time = process.turnaround_time - process.burst_time
+
+    return processes, gantt_chart
+
+def plot_gantt_chart(gantt_chart, title):
+    fig, gnt = plt.subplots()
+    gnt.set_title(title)
+    gnt.set_xlabel("Time")
+    gnt.set_ylabel("Processes")
+
+    colors = ['#4daf4a', '#377eb8', '#ff7f00', '#984ea3']
+    for (start_time, pid) in gantt_chart:
+        gnt.broken_barh([(start_time, processes[pid - 1].burst_time)], (10 * pid, 9), facecolors=(colors[(pid - 1) % len(colors)]))
+        plt.text(start_time + processes[pid - 1].burst_time / 2, 10 * pid + 5, f"P{pid}", ha='center', va='center')
+
+    plt.show()
+
+def get_process_input():
+    processes = []
+    num_processes = int(input("Enter the number of processes: "))
+    for i in range(num_processes):
+        pid = i + 1
+        arrival_time = int(input(f"Enter arrival time for Process {pid}: "))
+        burst_time = int(input(f"Enter burst time for Process {pid}: "))
+        processes.append(Process(pid, arrival_time, burst_time))
+    return processes
+
+if __name__ == "__main__":
+    processes = get_process_input()
+    processes, gantt_chart = fcfs_scheduling(processes)
+    plot_gantt_chart(gantt_chart, "FCFS Scheduling Gantt Chart")
+
+    print("\nProcess\tArrival Time\tBurst Time\tCompletion Time\tTurnaround Time\tWaiting Time")
+    for process in processes:
+        print(f"P{process.pid}\t\t{process.arrival_time}\t\t{process.burst_time}\t\t{process.completion_time}\t\t{process.turnaround_time}\t\t{process.waiting_time}")
+
+
+#############################################################################################################################
+
+b. Shortest Job First (Non-preemptive) 
+
+import matplotlib.pyplot as plt
+
+class Process:
+    def __init__(self, pid, arrival_time, burst_time):
+        self.pid = pid
+        self.arrival_time = arrival_time
+        self.burst_time = burst_time
+        self.completion_time = 0
+        self.turnaround_time = 0
+        self.waiting_time = 0
+        self.is_completed = False
+
+def sjf_non_preemptive_scheduling(processes):
+    current_time = 0
+    completed_processes = 0
+    gantt_chart = []
+    n = len(processes)
+    
+    while completed_processes < n:
+        ready_queue = [p for p in processes if p.arrival_time <= current_time and not p.is_completed]
+        
+        if ready_queue:
+            # Select process with the shortest burst time from the ready queue
+            current_process = min(ready_queue, key=lambda x: x.burst_time)
+            gantt_chart.append((current_time, current_process.pid))
+            current_time += current_process.burst_time
+            
+            # Update process details after it completes execution
+            current_process.completion_time = current_time
+            current_process.turnaround_time = current_process.completion_time - current_process.arrival_time
+            current_process.waiting_time = current_process.turnaround_time - current_process.burst_time
+            current_process.is_completed = True
+            completed_processes += 1
+        else:
+            # If no process is ready, increment the time
+            current_time += 1
+
+    return processes, gantt_chart
+
+def plot_gantt_chart(gantt_chart, processes):
+    fig, gnt = plt.subplots()
+    gnt.set_title("SJF Non-preemptive Scheduling Gantt Chart")
+    gnt.set_xlabel("Time")
+    gnt.set_ylabel("Processes")
+
+    colors = ['#4daf4a', '#377eb8', '#ff7f00', '#984ea3']
+    for start_time, pid in gantt_chart:
+        process = next(p for p in processes if p.pid == pid)
+        gnt.broken_barh([(start_time, process.burst_time)], (10 * pid, 9), facecolors=(colors[(pid - 1) % len(colors)]))
+        plt.text(start_time + process.burst_time / 2, 10 * pid + 5, f"P{pid}", ha='center', va='center')
+
+    plt.show()
+
+def get_process_input():
+    processes = []
+    num_processes = int(input("Enter the number of processes: "))
+    for i in range(num_processes):
+        pid = i + 1
+        arrival_time = int(input(f"Enter arrival time for Process {pid}: "))
+        burst_time = int(input(f"Enter burst time for Process {pid}: "))
+        processes.append(Process(pid, arrival_time, burst_time))
+    return processes
+
+if __name__ == "__main__":
+    processes = get_process_input()
+    processes, gantt_chart = sjf_non_preemptive_scheduling(processes)
+    plot_gantt_chart(gantt_chart, processes)
+
+    print("\nProcess\tArrival Time\tBurst Time\tCompletion Time\tTurnaround Time\tWaiting Time")
+    for process in sorted(processes, key=lambda x: x.pid):
+        print(f"P{process.pid}\t\t{process.arrival_time}\t\t{process.burst_time}\t\t{process.completion_time}\t\t{process.turnaround_time}\t\t{process.waiting_time}")
+
+
+#############################################################################################################################
+
+c. Shortest Job First (Preemptive)
+
+import matplotlib.pyplot as plt
+
+class Process:
+    def __init__(self, pid, arrival_time, burst_time):
+        self.pid = pid
+        self.arrival_time = arrival_time
+        self.burst_time = burst_time
+        self.remaining_time = burst_time
+        self.completion_time = 0
+        self.turnaround_time = 0
+        self.waiting_time = 0
+        self.started = False
+
+def sjf_preemptive_scheduling(processes):
+    current_time = 0
+    completed_processes = 0
+    gantt_chart = []
+    n = len(processes)
+
+    while completed_processes < n:
+        # Get all processes that have arrived and are not completed
+        ready_queue = [p for p in processes if p.arrival_time <= current_time and p.remaining_time > 0]
+        
+        if ready_queue:
+            # Select process with the shortest remaining time
+            current_process = min(ready_queue, key=lambda x: x.remaining_time)
+            
+            # Log to Gantt chart if a new process starts executing
+            if not current_process.started or (len(gantt_chart) > 0 and gantt_chart[-1][1] != current_process.pid):
+                gantt_chart.append((current_time, current_process.pid))
+                current_process.started = True
+            
+            # Execute the process for one time unit
+            current_process.remaining_time -= 1
+            current_time += 1
+            
+            # If the process finishes, record its completion time
+            if current_process.remaining_time == 0:
+                completed_processes += 1
+                current_process.completion_time = current_time
+                current_process.turnaround_time = current_process.completion_time - current_process.arrival_time
+                current_process.waiting_time = current_process.turnaround_time - current_process.burst_time
+        else:
+            # If no process is ready, increment the time
+            current_time += 1
+
+    return processes, gantt_chart
+
+def plot_gantt_chart(gantt_chart, processes):
+    fig, gnt = plt.subplots()
+    gnt.set_title("SJF Preemptive (SRTF) Scheduling Gantt Chart")
+    gnt.set_xlabel("Time")
+    gnt.set_ylabel("Processes")
+
+    colors = ['#4daf4a', '#377eb8', '#ff7f00', '#984ea3']
+    for start_time, pid in gantt_chart:
+        process = next(p for p in processes if p.pid == pid)
+        gnt.broken_barh([(start_time, 1)], (10 * pid, 9), facecolors=(colors[(pid - 1) % len(colors)]))
+        plt.text(start_time + 0.5, 10 * pid + 5, f"P{pid}", ha='center', va='center')
+
+    plt.show()
+
+def get_process_input():
+    processes = []
+    num_processes = int(input("Enter the number of processes: "))
+    for i in range(num_processes):
+        pid = i + 1
+        arrival_time = int(input(f"Enter arrival time for Process {pid}: "))
+        burst_time = int(input(f"Enter burst time for Process {pid}: "))
+        processes.append(Process(pid, arrival_time, burst_time))
+    return processes
+
+if __name__ == "__main__":
+    processes = get_process_input()
+    processes, gantt_chart = sjf_preemptive_scheduling(processes)
+    plot_gantt_chart(gantt_chart, processes)
+
+    print("\nProcess\tArrival Time\tBurst Time\tCompletion Time\tTurnaround Time\tWaiting Time")
+    for process in sorted(processes, key=lambda x: x.pid):
+        print(f"P{process.pid}\t\t{process.arrival_time}\t\t{process.burst_time}\t\t{process.completion_time}\t\t{process.turnaround_time}\t\t{process.waiting_time}")
+
+
+#############################################################################################################################
+
+d. Round Robin 
+
+import matplotlib.pyplot as plt
+
+class Process:
+    def __init__(self, pid, arrival_time, burst_time):
+        self.pid = pid
+        self.arrival_time = arrival_time
+        self.burst_time = burst_time
+        self.remaining_time = burst_time
+        self.completion_time = 0
+        self.turnaround_time = 0
+        self.waiting_time = 0
+        self.start_times = []
+
+def round_robin_scheduling(processes, time_quantum):
+    current_time = 0
+    queue = []
+    gantt_chart = []
+    
+    # Sort processes by arrival time
+    processes.sort(key=lambda x: x.arrival_time)
+    
+    # Add first process to the queue
+    queue.append(processes[0])
+    processes[0].start_times.append(current_time)
+    
+    # Track the index of the process to be added next
+    next_process_index = 1
+    while queue:
+        current_process = queue.pop(0)
+        
+        # Record start time in the Gantt chart if needed
+        if len(gantt_chart) == 0 or gantt_chart[-1][1] != current_process.pid:
+            gantt_chart.append((current_time, current_process.pid))
+        
+        # Execute the process for the time quantum or remaining time, whichever is smaller
+        exec_time = min(time_quantum, current_process.remaining_time)
+        current_time += exec_time
+        current_process.remaining_time -= exec_time
+        
+        # Check if process has finished
+        if current_process.remaining_time == 0:
+            current_process.completion_time = current_time
+            current_process.turnaround_time = current_process.completion_time - current_process.arrival_time
+            current_process.waiting_time = current_process.turnaround_time - current_process.burst_time
+        else:
+            # If the process isn't finished, add it to the end of the queue
+            queue.append(current_process)
+        
+        # Add any new processes that have arrived to the queue
+        while next_process_index < len(processes) and processes[next_process_index].arrival_time <= current_time:
+            queue.append(processes[next_process_index])
+            processes[next_process_index].start_times.append(current_time)
+            next_process_index += 1
+
+    return processes, gantt_chart
+
+def plot_gantt_chart(gantt_chart, processes):
+    fig, gnt = plt.subplots()
+    gnt.set_title("Round Robin Scheduling Gantt Chart")
+    gnt.set_xlabel("Time")
+    gnt.set_ylabel("Processes")
+
+    colors = ['#4daf4a', '#377eb8', '#ff7f00', '#984ea3']
+    for start_time, pid in gantt_chart:
+        process = next(p for p in processes if p.pid == pid)
+        gnt.broken_barh([(start_time, 1)], (10 * pid, 9), facecolors=(colors[(pid - 1) % len(colors)]))
+        plt.text(start_time + 0.5, 10 * pid + 5, f"P{pid}", ha='center', va='center')
+
+    plt.show()
+
+def get_process_input():
+    processes = []
+    num_processes = int(input("Enter the number of processes: "))
+    for i in range(num_processes):
+        pid = i + 1
+        arrival_time = int(input(f"Enter arrival time for Process {pid}: "))
+        burst_time = int(input(f"Enter burst time for Process {pid}: "))
+        processes.append(Process(pid, arrival_time, burst_time))
+    time_quantum = int(input("Enter the time quantum: "))
+    return processes, time_quantum
+
+if __name__ == "__main__":
+    processes, time_quantum = get_process_input()
+    processes, gantt_chart = round_robin_scheduling(processes, time_quantum)
+    plot_gantt_chart(gantt_chart, processes)
+
+    print("\nProcess\tArrival Time\tBurst Time\tCompletion Time\tTurnaround Time\tWaiting Time")
+    for process in sorted(processes, key=lambda x: x.pid):
+        print(f"P{process.pid}\t\t{process.arrival_time}\t\t{process.burst_time}\t\t{process.completion_time}\t\t{process.turnaround_time}\t\t{process.waiting_time}")
+
+
+#############################################################################################################################
+
+e. Priority (Non-preemptive) 
+
+import matplotlib.pyplot as plt
+
+class Process:
+    def __init__(self, pid, arrival_time, burst_time, priority):
+        self.pid = pid
+        self.arrival_time = arrival_time
+        self.burst_time = burst_time
+        self.priority = priority
+        self.completion_time = 0
+        self.turnaround_time = 0
+        self.waiting_time = 0
+        self.start_time = 0
+
+def priority_non_preemptive_scheduling(processes):
+    current_time = 0
+    completed_processes = 0
+    gantt_chart = []
+    n = len(processes)
+    
+    while completed_processes < n:
+        # Filter processes that have arrived and are not completed
+        ready_queue = [p for p in processes if p.arrival_time <= current_time and p.completion_time == 0]
+        
+        if ready_queue:
+            # Select process with the highest priority (lower number means higher priority)
+            current_process = min(ready_queue, key=lambda x: x.priority)
+            
+            # Start the process and calculate its completion time
+            current_process.start_time = current_time
+            gantt_chart.append((current_time, current_process.pid))
+            current_time += current_process.burst_time
+            current_process.completion_time = current_time
+            current_process.turnaround_time = current_process.completion_time - current_process.arrival_time
+            current_process.waiting_time = current_process.turnaround_time - current_process.burst_time
+            
+            completed_processes += 1
+        else:
+            # If no process is ready, increment the time
+            current_time += 1
+
+    return processes, gantt_chart
+
+def plot_gantt_chart(gantt_chart, processes):
+    fig, gnt = plt.subplots()
+    gnt.set_title("Priority (Non-preemptive) Scheduling Gantt Chart")
+    gnt.set_xlabel("Time")
+    gnt.set_ylabel("Processes")
+
+    colors = ['#4daf4a', '#377eb8', '#ff7f00', '#984ea3']
+    for start_time, pid in gantt_chart:
+        process = next(p for p in processes if p.pid == pid)
+        gnt.broken_barh([(start_time, process.burst_time)], (10 * pid, 9), facecolors=(colors[(pid - 1) % len(colors)]))
+        plt.text(start_time + process.burst_time / 2, 10 * pid + 5, f"P{pid}", ha='center', va='center')
+
+    plt.show()
+
+def get_process_input():
+    processes = []
+    num_processes = int(input("Enter the number of processes: "))
+    for i in range(num_processes):
+        pid = i + 1
+        arrival_time = int(input(f"Enter arrival time for Process {pid}: "))
+        burst_time = int(input(f"Enter burst time for Process {pid}: "))
+        priority = int(input(f"Enter priority for Process {pid} (lower value = higher priority): "))
+        processes.append(Process(pid, arrival_time, burst_time, priority))
+    return processes
+
+if __name__ == "__main__":
+    processes = get_process_input()
+    processes, gantt_chart = priority_non_preemptive_scheduling(processes)
+    plot_gantt_chart(gantt_chart, processes)
+
+    print("\nProcess\tArrival Time\tBurst Time\tPriority\tCompletion Time\tTurnaround Time\tWaiting Time")
+    for process in sorted(processes, key=lambda x: x.pid):
+        print(f"P{process.pid}\t\t{process.arrival_time}\t\t{process.burst_time}\t\t{process.priority}\t\t{process.completion_time}\t\t{process.turnaround_time}\t\t{process.waiting_time}")
+
+
+
+#############################################################################################################################
+
+f. Priority (preemptive)
+
+import matplotlib.pyplot as plt
+
+class Process:
+    def __init__(self, pid, arrival_time, burst_time, priority):
+        self.pid = pid
+        self.arrival_time = arrival_time
+        self.burst_time = burst_time
+        self.remaining_time = burst_time
+        self.priority = priority
+        self.completion_time = 0
+        self.turnaround_time = 0
+        self.waiting_time = 0
+
+def priority_preemptive_scheduling(processes):
+    processes.sort(key=lambda x: (x.arrival_time, x.priority))
+    current_time = 0
+    gantt_chart = []
+
+    while any(p.remaining_time > 0 for p in processes):
+        # Filter processes that have arrived and are not completed
+        ready_queue = [p for p in processes if p.arrival_time <= current_time and p.remaining_time > 0]
+        
+        if ready_queue:
+            # Select the process with the highest priority (lowest priority number)
+            current_process = min(ready_queue, key=lambda x: x.priority)
+            gantt_chart.append((current_time, current_process.pid))
+            
+            # Execute the process for one time unit
+            current_process.remaining_time -= 1
+            current_time += 1
+            
+            # If the process completes
+            if current_process.remaining_time == 0:
+                current_process.completion_time = current_time
+                current_process.turnaround_time = current_process.completion_time - current_process.arrival_time
+                current_process.waiting_time = current_process.turnaround_time - current_process.burst_time
+        else:
+            # No process is ready; increment time
+            current_time += 1
+
+    return processes, gantt_chart
+
+def plot_gantt_chart_priority_preemptive(gantt_chart):
+    fig, gnt = plt.subplots()
+    gnt.set_title("Priority (Preemptive) Scheduling Gantt Chart")
+    gnt.set_xlabel("Time")
+    gnt.set_ylabel("Processes")
+
+    colors = ['#4daf4a', '#377eb8', '#ff7f00', '#984ea3']
+    start_times = {}
+    
+    for i, (start_time, pid) in enumerate(gantt_chart):
+        if pid not in start_times:
+            start_times[pid] = start_time
+        end_time = start_time + 1
+        gnt.broken_barh([(start_time, 1)], (10 * pid, 9), facecolors=(colors[(pid - 1) % len(colors)]))
+        plt.text(start_time + 0.5, 10 * pid + 5, f"P{pid}", ha='center', va='center')
+    
+    plt.show()
+
+# Get user input for processes
+def get_process_input():
+    processes = []
+    num_processes = int(input("Enter the number of processes: "))
+    for i in range(num_processes):
+        pid = i + 1
+        arrival_time = int(input(f"Enter arrival time for Process {pid}: "))
+        burst_time = int(input(f"Enter burst time for Process {pid}: "))
+        priority = int(input(f"Enter priority for Process {pid} (lower number indicates higher priority): "))
+        processes.append(Process(pid, arrival_time, burst_time, priority))
+    return processes
+
+# Main function
+if __name__ == "__main__":
+    processes = get_process_input()
+    
+    # Run Priority Preemptive Scheduling
+    processes, gantt_chart = priority_preemptive_scheduling(processes)
+    plot_gantt_chart_priority_preemptive(gantt_chart)
+    
+    # Display Results
+    print("\nProcess\tArrival Time\tBurst Time\tPriority\tCompletion Time\tTurnaround Time\tWaiting Time")
+    for process in processes:
+        print(f"P{process.pid}\t\t{process.arrival_time}\t\t{process.burst_time}\t\t{process.priority}\t\t{process.completion_time}\t\t{process.turnaround_time}\t\t{process.waiting_time}")
+
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+//page replacement algorithms
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
+
+// Function to check if a page exists in frame
+bool isPagePresent(int page, int* frames, int frameCount) {
+    for (int i = 0; i < frameCount; i++) {
+        if (frames[i] == page)
+            return true;
+    }
+    return false;
+}
+
+// Function to find the position of the first occurrence of a page in future
+int findOptimalPosition(int* pages, int pageCount, int* frames, int frameCount, int currentPos) {
+    int farthest = -1, replaceIndex = 0;
+
+    for (int i = 0; i < frameCount; i++) {
+        int j;
+        for (j = currentPos + 1; j < pageCount; j++) {
+            if (frames[i] == pages[j]) {
+                if (j > farthest) {
+                    farthest = j;
+                    replaceIndex = i;
+                }
+                break;
+            }
+        }
+        if (j == pageCount)
+            return i;
+    }
+    return (farthest == -1) ? 0 : replaceIndex;
+}
+
+// FIFO Page Replacement Algorithm
+void fifo(int* pages, int pageCount, int frameCount) {
+    int* frames = (int*)calloc(frameCount, sizeof(int));
+    int pageFaults = 0;
+    int currentIndex = 0;
+
+    printf("\nFIFO Page Replacement:\n");
+    for (int i = 0; i < pageCount; i++) {
+        printf("\nReference to page %d: ", pages[i]);
+
+        if (!isPagePresent(pages[i], frames, frameCount)) {
+            frames[currentIndex] = pages[i];
+            currentIndex = (currentIndex + 1) % frameCount;
+            pageFaults++;
+
+            printf("Page Fault! Frames: ");
+        } else {
+            printf("No Page Fault. Frames: ");
+        }
+
+        for (int j = 0; j < frameCount; j++) {
+            if (frames[j] != 0)
+                printf("%d ", frames[j]);
+            else
+                printf("- ");
+        }
+    }
+    printf("\nTotal Page Faults (FIFO): %d\n", pageFaults);
+    free(frames);
+}
+
+// LRU Page Replacement Algorithm
+void lru(int* pages, int pageCount, int frameCount) {
+    int* frames = (int*)calloc(frameCount, sizeof(int));
+    int* lastUsed = (int*)calloc(frameCount, sizeof(int));
+    int pageFaults = 0;
+
+    printf("\nLRU Page Replacement:\n");
+    for (int i = 0; i < pageCount; i++) {
+        printf("\nReference to page %d: ", pages[i]);
+
+        if (!isPagePresent(pages[i], frames, frameCount)) {
+            int replaceIndex = 0;
+            int leastUsed = INT_MAX;
+
+            for (int j = 0; j < frameCount; j++) {
+                if (frames[j] == 0) {
+                    replaceIndex = j;
+                    break;
+                }
+                if (lastUsed[j] < leastUsed) {
+                    leastUsed = lastUsed[j];
+                    replaceIndex = j;
+                }
+            }
+
+            frames[replaceIndex] = pages[i];
+            lastUsed[replaceIndex] = i;
+            pageFaults++;
+
+            printf("Page Fault! Frames: ");
+        } else {
+            printf("No Page Fault. Frames: ");
+            for (int j = 0; j < frameCount; j++) {
+                if (frames[j] == pages[i]) {
+                    lastUsed[j] = i;
+                }
+            }
+        }
+
+        for (int j = 0; j < frameCount; j++) {
+            if (frames[j] != 0)
+                printf("%d ", frames[j]);
+            else
+                printf("- ");
+        }
+    }
+    printf("\nTotal Page Faults (LRU): %d\n", pageFaults);
+    free(frames);
+    free(lastUsed);
+}
+
+// Optimal Page Replacement Algorithm
+void optimal(int* pages, int pageCount, int frameCount) {
+    int* frames = (int*)calloc(frameCount, sizeof(int));
+    int pageFaults = 0;
+
+    printf("\nOptimal Page Replacement:\n");
+    for (int i = 0; i < pageCount; i++) {
+        printf("\nReference to page %d: ", pages[i]);
+
+        if (!isPagePresent(pages[i], frames, frameCount)) {
+            int replaceIndex;
+
+            for (int j = 0; j < frameCount; j++) {
+                if (frames[j] == 0) {
+                    replaceIndex = j;
+                    break;
+                }
+            }
+
+            if (frames[frameCount - 1] != 0) {
+                replaceIndex = findOptimalPosition(pages, pageCount, frames, frameCount, i);
+            }
+
+            frames[replaceIndex] = pages[i];
+            pageFaults++;
+
+            printf("Page Fault! Frames: ");
+        } else {
+            printf("No Page Fault. Frames: ");
+        }
+
+        for (int j = 0; j < frameCount; j++) {
+            if (frames[j] != 0)
+                printf("%d ", frames[j]);
+            else
+                printf("- ");
+        }
+    }
+    printf("\nTotal Page Faults (Optimal): %d\n", pageFaults);
+    free(frames);
+}
+
+int main() {
+    int pageCount, frameCount;
+
+    printf("Enter the number of pages: ");
+    scanf("%d", &pageCount);
+
+    printf("Enter the number of frames: ");
+    scanf("%d", &frameCount);
+
+    int* pages = (int*)malloc(pageCount * sizeof(int));
+
+    printf("Enter the page reference string: ");
+    for (int i = 0; i < pageCount; i++) {
+        scanf("%d", &pages[i]);
+    }
+
+    fifo(pages, pageCount, frameCount);
+    lru(pages, pageCount, frameCount);
+    optimal(pages, pageCount, frameCount);
+
+    free(pages);
+    return 0;
+}
+
+
